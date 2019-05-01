@@ -208,16 +208,30 @@ table bf_function
     }
     actions
     {
-        basic_forward;
+        no_op;
         _drop;
     }
     size : 512;
+}
+
+table forward
+{
+    reads
+    {
+        header_ipv4.dstAddr : lpm;
+    }
+    actions
+    {
+        basic_forward;
+        _drop;
+    }
 }
 
 control ingress
 {
     apply(bf_set);
     apply(bf_function);
+    apply(forward);
 }
 
 control egress
