@@ -62,6 +62,9 @@ header_type bf_metadata_t
         bit<13>hash_val1;
         bit<13>hash_val2;
         bit<13>hash_val2;
+        bit<1>bf_val1;
+        bit<1>bf_val2;
+        bit<1>bf_val3;
     }
 }
 
@@ -179,6 +182,9 @@ action set_bf_metadata()
     modify_field_with_hash_based_offset(bf_metadata.hash_val1, 0, hash_function1, 8192);
     modify_field_with_hash_based_offset(bf_metadata.hash_val2, 0, hash_function2, 8192);
     modify_field_with_hash_based_offset(bf_metadata.hash_val3, 0, hash_function3, 8192);
+    register_read(bf_metadata.bf_val1, bloom_filter, bf_metadata.hash_val1);
+    register_read(bf_metadata.bf_val2, bloom_filter, bf_metadata.hash_val2);
+    register_read(bf_metadata.bf_val3, bloom_filter, bf_metadata.hash_val3);
 }
 
 action basic_forward(in bit<9> port)
@@ -202,9 +208,9 @@ table bf_function
 {
     reads
     {
-        bf_metadata.hash_val1 : exact;
-        bf_metadata.hash_val2 : exact;
-        bf_metadata.hash_val3 : exact;
+        bf_metadata.bf_val1 : exact;
+        bf_metadata.bf_val2 : exact;
+        bf_metadata.bf_val3 : exact;
     }
     actions
     {
